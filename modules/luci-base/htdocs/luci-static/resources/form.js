@@ -2219,7 +2219,7 @@ const CBITypedSection = CBIAbstractSection.extend(/** @lends LuCI.form.TypedSect
 	handleRemove(section_id, ev) {
 		const config_name = this.uciconfig ?? this.map.config;
 
-		this.map.data.remove(config_name, section_id);
+		this.map.data?.remove(config_name, section_id);
 		return this.map.save(null, true);
 	},
 
@@ -3391,7 +3391,7 @@ const CBIGridSection = CBITableSection.extend(/** @lends LuCI.form.GridSection.p
 		const prevMap = mapNode ? dom.findClassInstance(mapNode) : this.map;
 
 		if (prevMap.addedSection != null && !isSaving)
-			this.map.data.remove(config_name, prevMap.addedSection);
+			this.map.data?.remove(config_name, prevMap.addedSection);
 
 		delete prevMap.addedSection;
 
@@ -3550,7 +3550,7 @@ const CBINamedSection = CBIAbstractSection.extend(/** @lends LuCI.form.NamedSect
 		const section_id = this.section;
 		const config_name = this.uciconfig ?? this.map.config;
 
-		this.map.data.remove(config_name, section_id);
+		this.map.data?.remove(config_name, section_id);
 		return this.map.save(null, true);
 	},
 
@@ -3863,6 +3863,17 @@ const CBIValue = CBIAbstractValue.extend(/** @lends LuCI.form.Value.prototype */
 const CBIDynamicList = CBIValue.extend(/** @lends LuCI.form.DynamicList.prototype */ {
 	__name__: 'CBI.DynamicList',
 
+	/**
+	 * Allows the underlying form controls to have multiple identical values.
+	 *
+	 * Default is `null`. If `true`, the underlying form value will
+	 * not be checked for duplication.
+	 *
+	 * @name LuCI.form.DynamicList.prototype#allowduplicates
+	 * @type boolean
+	 * @default null
+	 */
+
 	/** @private */
 	renderWidget(section_id, option_index, cfgvalue) {
 		const value = (cfgvalue != null) ? cfgvalue : this.default;
@@ -3872,6 +3883,7 @@ const CBIDynamicList = CBIValue.extend(/** @lends LuCI.form.DynamicList.prototyp
 		const widget = new ui.DynamicList(items, choices, {
 			id: this.cbid(section_id),
 			sort: this.keylist,
+			allowduplicates: this.allowduplicates,
 			optional: this.optional || this.rmempty,
 			datatype: this.datatype,
 			placeholder: this.placeholder,
